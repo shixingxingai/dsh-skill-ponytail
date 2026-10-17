@@ -1,5 +1,7 @@
 # @shixingxingai/dsh-skill-ponytail · Ponytail for DeepSeek Harness
 
+**中文** | [English](README.en.md)
+
 [Ponytail](https://github.com/DietrichGebert/ponytail)（懒人资深开发模式：最小改动解决问题，回复一段话就能看懂）
 的 DeepSeek Harness 插件版。一次安装，6 个技能进入 `/` 菜单与模型的 skill 目录，
 并且每个会话自动开启 ponytail 模式。
