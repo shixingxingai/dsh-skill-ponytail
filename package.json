@@ -4,11 +4,28 @@
   "private": true,
   "type": "module",
   "description": "Ponytail, lazy senior dev mode: the smallest change that fully solves the task, plus audit, review, debt and gain skills. Skills bundle for DeepSeek Harness.",
+  "license": "MIT",
+  "author": "shixingxingai",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shixingxingai/dsh-skill-ponytail.git"
+  },
+  "homepage": "https://github.com/shixingxingai/dsh-skill-ponytail#readme",
   "icon": "./icon.svg",
+  "files": [
+    "entry.js",
+    "cordis.patch.yml",
+    "assets/",
+    "locale/",
+    "icon.svg"
+  ],
   "exports": {
     ".": "./entry.js",
     "./package.json": "./package.json",
     "./locale/*.json": "./locale/*.json"
+  },
+  "scripts": {
+    "test": "node --test"
   },
   "dsh": {
     "bundle": {

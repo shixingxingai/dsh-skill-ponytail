@@ -19,8 +19,9 @@ Source: the Ponytail 5 benchmark notes and the README of the upstream project
 
 ## Scoreboard
 
-Render plain ASCII bars. The bar length shows ponytail as a share of the
-no-skill baseline; the label carries the exact figure:
+Render the bars with block characters (`█` filled, `·` empty). The bar length
+shows ponytail as a share of the no-skill baseline; the label carries the exact
+figure:
 
 ```
   ponytail gain           benchmark · 39 tasks × 5 runs · Opus 5.5

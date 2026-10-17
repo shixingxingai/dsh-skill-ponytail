@@ -1,6 +1,6 @@
 ---
 name: ponytail-audit
-description: 'Quality audit of a whole repo: bugs, security holes, what breaks under real load, risky code without tests, slow paths, and what to delete, merge or split. Ranked, each finding explained in plain English. One-shot report, changes nothing. Use for "audit this codebase", "review the whole repo", "find bloat", "what can I delete", /ponytail-audit.'
+description: 'Quality audit of a whole repo: bugs, security holes, what breaks under real load, risky code without tests, slow paths, and what to delete, merge or split. Ranked, each finding explained in plain language. One-shot report, changes nothing. Use for "audit this codebase", "review the whole repo", "find bloat", "what can I delete", /ponytail-audit.'
 ---
 
 Audit the whole repo like the senior developer who just inherited it and
@@ -63,8 +63,10 @@ tested and fixed later. This is a report the user asked for, so give it in full.
 
 ## 4. Output
 
-Very simple English: short sentences, everyday words. Explain a technical
-term the first time you use it. The reader may never have seen this code.
+The user's language: short sentences, everyday words, and the labels below
+translated to match. Keep code, paths and identifiers as they are. Explain a
+technical term the first time you use it. The reader may never have seen this
+code.
 
 Start with `What this repo does:` in two or three sentences, and the load
 you assumed.

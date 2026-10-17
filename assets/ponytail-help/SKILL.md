@@ -20,8 +20,9 @@ Level sticks until changed or session end.
 
 With the DeepSeek Harness plugin enabled, every session starts in ponytail mode
 at level **full** on its own: the rules sit in the system prompt from the first
-step on, for this agent and every subagent. `/ponytail` with a level word
-switches the level for the conversation.
+step on, for this agent and every subagent, and apply to coding and repo work
+only. `/ponytail` with a level word switches the level for the conversation;
+`/ponytail-mode lite|full|ultra` does the same directly, with no model turn.
 
 ## Skills
 
@@ -41,15 +42,19 @@ in the model's skill catalog, so asking for one by name works as well.
 
 ## Deactivate
 
-Say "stop ponytail" or "normal mode" to drop it for this conversation. Resume
-anytime with `/ponytail`. `/ponytail off` also works. To stop ponytail from
-auto-starting in every session, disable the Ponytail plugin in
+`/ponytail-mode off` drops it for this conversation and removes the rules from
+the system prompt on the next step, without a model turn. Saying "stop ponytail"
+or "normal mode", or `/ponytail off`, works too but goes through the model.
+Resume anytime with `/ponytail-mode full` (or `lite` / `ultra`). To stop ponytail
+from auto-starting in every session, disable the Ponytail plugin in
 DeepSeek Harness settings → Plugins.
 
 ## Update
 
-DeepSeek Harness settings → Plugins manages this bundle: install, remove or
-reinstall it there, then start a new session to pick up changed skills.
+DeepSeek Harness → Settings → Plugins manages this bundle: install, remove or
+reinstall it there. A changed skill body is picked up the next time that skill
+loads; a changed description, or a change to the plugin code itself, needs an
+app restart.
 
 ## More
 
