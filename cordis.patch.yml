@@ -1,0 +1,3 @@
+- insert:
+    - id: ponytail
+      name: '@local/ponytail'
