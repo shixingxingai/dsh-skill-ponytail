@@ -4,8 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Ponytail, lazy senior dev mode: the smallest change that fully solves the task, plus audit, review, debt and gain skills. Skills bundle for DeepSeek Harness.",
+  "icon": "./icon.svg",
   "exports": {
-    ".": "./main.js",
+    ".": "./entry.js",
     "./package.json": "./package.json",
     "./locale/*.json": "./locale/*.json"
   },

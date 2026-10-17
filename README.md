@@ -38,9 +38,14 @@ git clone git@github.com:shixingxingai/dsh-skill-ponytail.git
 - 本会话退出：说 "stop ponytail" / "normal mode"，或 `/ponytail off`
 - 所有会话不再自动启用：设置 → Plugins 里停用本插件
 
+注意：注入的段落本会话常驻系统提示词，换档与退出由模型按该段落的指示当轮遵守；
+要从提示词里彻底移除它，只能停用插件。
+
 ## 与上游的差异
 
-- 6 个技能正文与上游 `skills/` 目录一致；frontmatter 的 `description` 改为单行（Harness 解析要求）。
+- 6 个技能正文与上游 `skills/` 目录一致；frontmatter 的 `description` 改为单行（Harness 解析要求），
+  上游的 `argument-hint`、`license` 两个字段不再保留（技能调用与许可分别由 Harness 与 [LICENSE](LICENSE) 负责）。
+- `ponytail` 正文里「换档/退出」那一行按 Harness 的表述重写。
 - `ponytail-help` 的调用与更新说明改写为 Harness 的 `/` 菜单与 设置 → Plugins。
 - 新增 skill provider 注册与系统提示词自动注入：上游靠各宿主自行加载、只在被调用时生效。
 
@@ -49,14 +54,16 @@ git clone git@github.com:shixingxingai/dsh-skill-ponytail.git
 ```
 package.json            bundle 清单，dsh.bundle.patch 指向补丁
 cordis.patch.yml        插入一行 ponytail
-main.js                 Host 插件：注册 skill provider + 每会话注入 ponytail 系统提示词段
+entry.js                Host 插件：注册 skill provider + 每会话注入 ponytail 系统提示词段
 assets/<name>/SKILL.md  六个技能正文（name/description 在 YAML frontmatter）
 locale/                 插件页显示的标题与描述
+icon.svg                插件页图标
 ```
 
 技能正文以 `SKILL.md` 为准，`description` 从 frontmatter 单行读出。
-改 `SKILL.md` 立即生效（技能加载时才读盘）；改 `main.js` 属于替换已安装包的代码，
-需要重启 DeepSeek Harness 才会加载新一代模块。
+改 `SKILL.md` 的**正文**立即生效（技能加载时才读盘）；**`description` 在插件加载时读出并缓存，
+改后需重启** DeepSeek Harness 才更新。改 `entry.js` 属于替换已安装包的代码，
+同样需要重启才会加载新一代模块。
 
 ## 声明 / Attribution
 

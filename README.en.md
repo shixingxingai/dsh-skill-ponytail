@@ -42,10 +42,17 @@ first step, for the agent and every subagent.
 - Drop it for this conversation: say "stop ponytail" / "normal mode", or `/ponytail off`
 - Stop auto-starting in all sessions: disable the plugin in Settings → Plugins
 
+Note: the injected section stays in the system prompt for the whole conversation,
+so switching level or dropping the mode is honored by the model according to that
+section's instructions. Disabling the plugin is the only way to remove the section.
+
 ## Differences from upstream
 
-- The 6 skill bodies match upstream's `skills/` directory; only the frontmatter
-  `description` was flattened to a single line (Harness parses single-line scalars).
+- The 6 skill bodies match upstream's `skills/` directory; the frontmatter
+  `description` was flattened to a single line (Harness parses single-line scalars),
+  and upstream's `argument-hint` / `license` fields are dropped (invocation and
+  licensing are handled by Harness and [LICENSE](LICENSE) respectively).
+- The "switch level / leave the mode" line in the `ponytail` body was reworded for Harness.
 - `ponytail-help`'s invocation and update sections were rewritten for Harness's
   `/` menu and Settings → Plugins.
 - Added: skill-provider registration and automatic system-prompt injection — upstream
@@ -56,16 +63,18 @@ first step, for the agent and every subagent.
 ```
 package.json            bundle manifest; dsh.bundle.patch points at the patch
 cordis.patch.yml        inserts one ponytail line
-main.js                 host plugin: registers the skill provider + injects the
+entry.js                host plugin: registers the skill provider + injects the
                         ponytail system-prompt section every session
 assets/<name>/SKILL.md  the six skill bodies (name/description in YAML frontmatter)
 locale/                 title and description shown on the plugin page
+icon.svg                plugin-page icon
 ```
 
 The skill body is whatever `SKILL.md` says; `description` is read from the
-single-line frontmatter. Editing `SKILL.md` takes effect immediately (it is read
-from disk at load time). Editing `main.js` replaces installed package code and needs
-a DeepSeek Harness restart to load the new module.
+single-line frontmatter. Editing a `SKILL.md` **body** takes effect immediately (it is
+read from disk at load time); its **`description`** is read and cached when the plugin
+loads, so changing it needs a DeepSeek Harness restart. Editing `entry.js` replaces
+installed package code and also needs a restart to load the new module.
 
 ## Attribution
 

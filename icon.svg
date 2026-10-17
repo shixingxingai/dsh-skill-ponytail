@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Ponytail">
+  <rect width="128" height="128" rx="28" fill="#20242e"/>
+  <circle cx="52" cy="54" r="29" fill="none" stroke="#e8eaed" stroke-width="9"/>
+  <path d="M77 41c26 9 35 44 26 79-14-7-25-25-31-50z" fill="#ffb86b"/>
+  <circle cx="79" cy="46" r="7" fill="#ff9f43"/>
+</svg>

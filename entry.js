@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +9,12 @@ const name = "ponytail";
 const inject = ["skills", "systemPrompt"];
 /** Registry provider label carried by every ponytail skill. */
 const PROVIDER_NAME = "ponytail";
-/** Packaged-skill precedence, same value as BUNDLED_SKILL_RANK in @deepseek-ai/dsh-skill. */
+/**
+ * Packaged-skill precedence. Kept as a literal rather than imported from
+ * @deepseek-ai/dsh-skill: the host's copy lives in the app bundle, not in the
+ * profile the plugin installs into, so importing it here would fail to resolve.
+ * Mirrors BUNDLED_SKILL_RANK there (currently 600).
+ */
 const RANK = 600;
 
 const ASSET_ROOT = fileURLToPath(new URL("./assets/", import.meta.url));
@@ -36,14 +41,33 @@ function parseSkill(raw, path) {
   return { name: skillName, description, content: raw.slice(frontmatter[0].length).trim() };
 }
 
-function candidates() {
-  return readdirSync(ASSET_ROOT, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => {
-      const directory = join(ASSET_ROOT, entry.name);
-      const locator = join(directory, "SKILL.md");
+/**
+ * Read every bundled skill directory. A directory without a SKILL.md, or one
+ * whose SKILL.md cannot be parsed, is reported through `warn` and skipped
+ * instead of failing the whole plugin.
+ * @param warn - diagnostic sink for skipped or unreadable assets.
+ * @returns the parsed skill candidates in directory order.
+ */
+function candidates(warn) {
+  let entries;
+  try {
+    entries = readdirSync(ASSET_ROOT, { withFileTypes: true });
+  } catch (error) {
+    warn(`ponytail: cannot read asset directory ${ASSET_ROOT}: ${error.message}`);
+    return [];
+  }
+  const skills = [];
+  for (const entry of entries) {
+    if (!entry.isDirectory()) continue;
+    const directory = join(ASSET_ROOT, entry.name);
+    const locator = join(directory, "SKILL.md");
+    if (!existsSync(locator)) {
+      warn(`ponytail: ${directory} has no SKILL.md; skipped`);
+      continue;
+    }
+    try {
       const { name: skillName, description } = parseSkill(readFileSync(locator, "utf8"), locator);
-      return {
+      skills.push({
         name: skillName,
         description,
         invocation: { modelInvocable: true, userInvocable: true },
@@ -53,8 +77,12 @@ function candidates() {
         resourceBase: { kind: "directory", path: directory },
         path: locator,
         locator
-      };
-    });
+      });
+    } catch (error) {
+      warn(`ponytail: ${locator} skipped: ${error.message}`);
+    }
+  }
+  return skills;
 }
 
 /**
@@ -63,7 +91,8 @@ function candidates() {
  * @param ctx - Context carrying the skill registry and the prompt registry.
  */
 function apply(ctx) {
-  const catalog = candidates();
+  const warn = (message) => ctx.logger?.warn(message);
+  const catalog = candidates(warn);
   const provider = {
     name: PROVIDER_NAME,
     list: () => Promise.resolve(catalog),
@@ -84,15 +113,17 @@ function apply(ctx) {
   };
   ctx.skills.registerProvider(() => provider);
   const ponytail = catalog.find((skill) => skill.name === "ponytail");
-  if (ponytail !== undefined) {
-    const body = parseSkill(readFileSync(ponytail.locator, "utf8"), ponytail.locator).content;
-    ctx.effect(() => ctx.systemPrompt.section({
-      name: "ponytail:instructions",
-      order: (ctx.systemPrompt.getSectionOrder("DEPLOYMENT_PERSONA_PREFIX") ?? 0) + 100,
-      text: `PONYTAIL MODE ACTIVE — level: full\n\n${body}`,
-      interpolate: false
-    }), "ponytail.section()");
+  if (ponytail === undefined) {
+    warn("ponytail: bundled skill \"ponytail\" is missing; no system-prompt section injected");
+    return;
   }
+  const body = parseSkill(readFileSync(ponytail.locator, "utf8"), ponytail.locator).content;
+  ctx.effect(() => ctx.systemPrompt.section({
+    name: "ponytail:instructions",
+    order: (ctx.systemPrompt.getSectionOrder("DEPLOYMENT_PERSONA_PREFIX") ?? 0) + 100,
+    text: `PONYTAIL MODE ACTIVE (default level: full). Honor any level the user asks for (/ponytail lite|full|ultra), and stop applying these rules for the rest of this session when the user says "stop ponytail" or "normal mode".\n\n${body}`,
+    interpolate: false
+  }), "ponytail.section()");
 }
 
 export { apply, inject, name };
