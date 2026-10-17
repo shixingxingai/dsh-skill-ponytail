@@ -1,3 +1,3 @@
 - insert:
     - id: ponytail
-      name: '@local/ponytail'
+      name: '@shixingxingai/dsh-skill-ponytail'
